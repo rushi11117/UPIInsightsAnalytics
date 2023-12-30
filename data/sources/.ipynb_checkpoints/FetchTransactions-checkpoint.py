@@ -35,7 +35,7 @@ class FetchLocations:
         
         client = MongoClient(host, int(port))
         db = client[database]
-        collection = db['coordinates']  # Corrected the collection name
+        collection = db['cordinates']  # Corrected the collection name
         return list(collection.find({}, {'_id': 0}))
 
 class FetchTransactionsWithLocations:
@@ -46,13 +46,14 @@ class FetchTransactionsWithLocations:
     def getAllTransactionsWithLocations(self):
         transactions_df = self.transaction_gateway.getTransactionsFromGateway()
         locations = self.location_fetcher.getAllLocationsCoordinates()
-        print(locations)
+        print(len(locations))
         print(len(transactions_df))
         if not transactions_df.empty:
-            no_of_transactions = len(transactions_df.keys())
-            transactions_df['TRANSACTION_CITY'] = [random.choice(locationst)[str(i % 99)] for i in range(no_of_transactions)]
+            no_of_transactions = len(transactions_df)
+            transactions_df['TRANSACTION_CITY'] = [random.choice(locations)[str(i % 99)] for i in range(no_of_transactions)]
         return transactions_df  # Return the modified DataFrame
-        
-transactions_with_locations = FetchTransactionsWithLocations()
-result = transactions_with_locations.getAllTransactionsWithLocations()
-print(result)
+
+
+# transactions_with_locations = FetchTransactionsWithLocations()
+# result = transactions_with_locations.getAllTransactionsWithLocations()
+# print(result)
