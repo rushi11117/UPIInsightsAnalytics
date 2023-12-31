@@ -28,7 +28,7 @@ class FetchTransactions:
 class FetchLocations:
     def getAllLocationsCoordinates(self):
         config = configparser.ConfigParser()
-        config.read(r'D:\Data Analysis\upi-data-analytics\databases\mongoDB\mongodb_config.ini')
+        config.read(r'D:\Data Analysis\upi_data_analytics\databases\mongoDB\mongodb_config.ini')
         host = config['MongoDB']['host']
         port = config['MongoDB']['port']
         database = config['MongoDB']['database']
@@ -54,6 +54,6 @@ class FetchTransactionsWithLocations:
         return transactions_df  # Return the modified DataFrame
 
 
-# transactions_with_locations = FetchTransactionsWithLocations()
-# result = transactions_with_locations.getAllTransactionsWithLocations()
+# transactions_with_locations = FetchLocations()
+# result = transactions_with_locations.getAllLocationsCoordinates()
 # print(result)

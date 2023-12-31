@@ -2,10 +2,11 @@ import cx_Oracle as oracle
 import configparser
 
 class OracleConnection:
-    
+    """_summary_
+    """    
     def __init__(self, table_name):
         self.config = configparser.ConfigParser()
-        self.config.read(r'D:\Data Analysis\upi-data-analytics\databases\oracle\oracle_config.ini')
+        self.config.read(r'D:\Data Analysis\upi_data_analytics\databases\oracle\oracle_config.ini')
         self.table_name = table_name
         self.username = self.config['Oracle']['username']
         self.password = self.config['Oracle']['password']
@@ -37,7 +38,7 @@ class OracleConnection:
             return f"Table {table_name}Is Empty"
 
 
-# cursor, connection = OracleConnection('TRANSACTION_BUFFER').fetchAllFromTable()
-# first_tuple = cursor.fetchall()[0]
-# print(first_tuple)
-# connection.close()
+cursor, connection = OracleConnection('TRANSACTION_BUFFER').fetchAllFromTable()
+first_tuple = cursor.fetchall()[0]
+print(first_tuple)
+connection.close()
