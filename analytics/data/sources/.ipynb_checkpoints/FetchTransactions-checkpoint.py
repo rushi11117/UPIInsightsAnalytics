@@ -13,17 +13,23 @@ import pandas as pd
 from pymongo import MongoClient
 import random
 import configparser
+from OracleConnection import OracleConnection
 
 # help(requests)
 class FetchTransactions:
     def getTransactionsFromGateway(self):  
         try:
             ResponseEntity = requests.get('http://localhost:8085/transactions-insights')
-            ResponseEntity.raise_for_status()  # Raise an error for HTTP errors
+            ResponseEntity.raise_for_status()
+            print(ResponseEntity.status_code())
+            return pd.DataFrame(ResponseEntity.json())
         except requests.HTTPError as e:
-            print(e)
-            return pd.DataFrame()  # Return an empty DataFrame on error
-        return pd.DataFrame(ResponseEntity.json())
+            cursor, connection = OracleConnection('TRANSACTION_BUFFER').fetchAllFromTable()
+            transactions = cursor.fetchall()
+            connection.close()
+            return transactions
+            # print(e)
+            # return pd.DataFrame()
 
 class FetchLocations:
     def getAllLocationsCoordinates(self):
@@ -54,6 +60,8 @@ class FetchTransactionsWithLocations:
         return transactions_df  # Return the modified DataFrame
 
 
-# transactions_with_locations = FetchLocations()
-# result = transactions_with_locations.getAllLocationsCoordinates()
-# print(result)
+transactions_with_locations = FetchTransactionsWithLocations()
+result = transactions_with_locations.getAllTransactionsWithLocations()
+print(type(result))
+output_file_path = r'D:\Data Analysis\upi_data_analytics\analytics\data\processed_data\transactions20231130.csv'
+result.to_csv(output_file_path, index=False)

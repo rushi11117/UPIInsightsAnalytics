@@ -1,5 +1,8 @@
 import cx_Oracle as oracle
 import configparser
+import os
+
+# For Microservice Down Only
 
 class OracleConnection:
     """_summary_
