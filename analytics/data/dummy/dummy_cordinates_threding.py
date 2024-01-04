@@ -6,6 +6,13 @@
 # pip install csv
 # pip install math
 
+    # """
+    # @rushi11117
+
+    # Pending....
+    # """
+
+
 import random
 import json
 import configparser 
@@ -13,11 +20,14 @@ from pymongo import MongoClient
 import pandas as pd
 import csv
 import math
+import threading
 import time
+
 
 """
     linear insertion 
-    EXECUTION TIME for 2000 documents is 214.0633087158203
+    EXECUTION TIME for: 2000 documents is: 175.19338178634644 sec for: 5 threads
+    threading factor :
 """
 class GenerateAndInsertCoordinates:
 
@@ -123,6 +133,10 @@ class GenerateAndInsertCoordinates:
         }
         return coordinates
 
+    def insert_data(self, collection, num_documents):
+        data = [self.generate_coordinates() for _ in range(num_documents)]
+        # print(data)
+        collection.insert_many(data)
 
     """
     Insert Operation To MongoDB(local)
@@ -140,13 +154,32 @@ class GenerateAndInsertCoordinates:
     Note:
     Spams Limit to 40K hits
     """
-    def InsertDataToMongoDB(self, collection_name):
+    def insert_data_to_mongodb_multithreaded(self, collection_name, total_documents, num_threads):
         collection = self.getDB()[collection_name]
-        no_of_documents = collection.count_documents({})
-        # if no_of_documents < 40000:
-        for _ in range(2000):
-            collection.insert_many([self.generate_coordinates()])
+        documents_per_thread = total_documents // num_threads
+        
+        threads = []
+        for _ in range(num_threads):
+            thread = threading.Thread(target=self.insert_data, args=(collection, documents_per_thread))
+            threads.append(thread)
+            thread.start()
+
+        # Handle the remaining documents by allocating them to the last thread
+        remaining_docs = total_documents % num_threads
+        if remaining_docs:
+            last_thread = threading.Thread(target=self.insert_data, args=(collection, remaining_docs))
+            threads.append(last_thread)
+            last_thread.start()
+
+        for thread in threads:
+            thread.join()
+
+# Usage
+obj = GenerateAndInsertCoordinates()
+number_documents = 400
+threads = 30
 start_time = time.time()
-GenerateAndInsertCoordinates().InsertDataToMongoDB('coordinates1')
+
+obj.insert_data_to_mongodb_multithreaded('cordinates1', number_documents, threads)
 print("EXECUTION TIME")
 print(time.time() - start_time)

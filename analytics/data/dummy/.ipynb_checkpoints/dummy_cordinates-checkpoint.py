@@ -13,7 +13,12 @@ from pymongo import MongoClient
 import pandas as pd
 import csv
 import math
+import time
 
+"""
+    linear insertion 
+    EXECUTION TIME for 2000 documents is 214.0633087158203
+"""
 class GenerateAndInsertCoordinates:
 
 
@@ -139,7 +144,9 @@ class GenerateAndInsertCoordinates:
         collection = self.getDB()[collection_name]
         no_of_documents = collection.count_documents({})
         # if no_of_documents < 40000:
-        for _ in range(40000):
+        for _ in range(2000):
             collection.insert_many([self.generate_coordinates()])
-
-GenerateAndInsertCoordinates().InsertDataToMongoDB('coordinates')
+start_time = time.time()
+GenerateAndInsertCoordinates().InsertDataToMongoDB('coordinates1')
+print("EXECUTION TIME")
+print(time.time() - start_time)
