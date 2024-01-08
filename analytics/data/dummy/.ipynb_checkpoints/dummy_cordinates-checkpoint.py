@@ -22,6 +22,21 @@ import time
 class GenerateAndInsertCoordinates:
 
 
+    """
+    Distance Formula
+
+    Dependancies:
+    pip list || strstr math
+    
+    Args:
+    Float : Latitude1
+    Float : Latitude2
+    Float : Logitude1
+    FLoat : Longitude2
+
+    Returns:
+    Float : distance
+    """
     def calculate_distance(self, lat1, lon1, lat2, lon2):
         # Haversine formula to calculate distance between two points on Earth
         R = 6371.0  # approximate radius of Earth in kilometers
@@ -35,6 +50,20 @@ class GenerateAndInsertCoordinates:
         distance = R * c
         return distance
 
+    """
+    Find Nearest NSPLocation And Minimum Distance From Client Request Location
+
+    Dependancies:
+    getNSPLocations()
+    
+    Args:
+    Float : latitude
+    Float : longitude
+
+    Returns:
+    Float : Minimum distance from closest NSPLocation
+    Point : Closest NSPLocation
+    """
     def get_nearest_NSPLocation_distance(self, latitude, longitude):
         NSPLocations = self.getNSPLocations()
 
@@ -51,7 +80,20 @@ class GenerateAndInsertCoordinates:
                     closest_NSPLocation = NSPLocation
 
         return closest_distance, closest_NSPLocation
-        
+
+    """
+    Decide Transaction Status
+
+    Dependancies:
+    pip list || strstr pymongo.MongoClient && strstr configparser
+    
+    Args:
+    None
+
+    Returns:
+    MongoDBDatabaseInstance : Instance 
+    """
+    
     def getDB(self):
         config = configparser.ConfigParser()
         config.read(r'D:\Data Analysis\upi_data_analytics\databases\mongoDB\mongodb_config.ini')
@@ -59,7 +101,18 @@ class GenerateAndInsertCoordinates:
         return client[config['MongoDB']['database']]
 
     
-        
+    """
+    Get lastest updated NSPLocations .csv
+
+    Dependancies:
+    pip list || strstr csv
+    
+    Args:
+    None
+
+    Returns:
+    [Point] : NSPLocations
+    """
     def getNSPLocations(self):
         NSPLocations = []
         with open('coordinates.csv', mode='r') as file:
@@ -73,6 +126,18 @@ class GenerateAndInsertCoordinates:
                 NSPLocations.append(NSPLocationSet)
         return NSPLocations
 
+    """
+    Modulate Network Latency using NSPLocations and terrain
+
+    Dependancies:
+    get_nearest_NSPLocation_distance(Float, Float)
+    
+    Args:
+    latitude(Float) longitude(Float)
+
+    Returns:
+    Success Latency(Interger), Failure Latency(Integer)
+    """
     
     def getNetworkLatency(self, latitude, longitude):
         NSPLocation_distance = self.get_nearest_NSPLocation_distance(latitude, longitude)[0]
@@ -85,13 +150,13 @@ class GenerateAndInsertCoordinates:
     Decide Transaction Status
 
     Dependancies:
-    getNetworkLatancy()
+    getNetworkLatancy(Float, Float)
     
     Args:
-    latitude longitude
+    Float : latitude ,Float : longitude
 
     Returns:
-    Transaction Status
+    enum(String): Transaction Status
     """
     def transactionStatus(self, latitude, longitude):
         success_latency, failure_latency = self.getNetworkLatency(latitude, longitude)
@@ -102,10 +167,10 @@ class GenerateAndInsertCoordinates:
 
     Dependancies:
     pip list || strstr randome
-    transactionStatus()
+    transactionStatus(abs(FLoat), abs(Float))
     
     Args:
-    Two Direactional Bound Array [latitude ,latitude ,longitude ,longitude]
+    Float[] : Two Direactional Bound Array [latitude ,latitude ,longitude ,longitude]
 
     Returns:
     JSON : coordinates
