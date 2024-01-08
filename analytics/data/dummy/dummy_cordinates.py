@@ -205,13 +205,13 @@ class GenerateAndInsertCoordinates:
     Note:
     Spams Limit to 40K hits
     """
-    def InsertDataToMongoDB(self, collection_name):
+    def InsertDataToMongoDB(self, collection_name, number_of_documents):
         collection = self.getDB()[collection_name]
         no_of_documents = collection.count_documents({})
         # if no_of_documents < 40000:
-        for _ in range(2000):
+        for _ in range(number_of_documents):
             collection.insert_many([self.generate_coordinates()])
 start_time = time.time()
-GenerateAndInsertCoordinates().InsertDataToMongoDB('coordinates1')
+GenerateAndInsertCoordinates().InsertDataToMongoDB('coordinates1',2000)
 print("EXECUTION TIME")
 print(time.time() - start_time)
