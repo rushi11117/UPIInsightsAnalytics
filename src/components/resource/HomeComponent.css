@@ -1,0 +1,28 @@
+.partners-carousel {
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    margin-top: 20px;
+  }
+  
+  .partner-card {
+    flex: 0 0 20%;
+    transition: all 0.5s;
+  }
+  
+  .partner-card:nth-child(3) {
+    transform: scale(1.2);
+  }
+  
+  .partner-card:not(:nth-child(3)) {
+    opacity: 0.7;
+  }
+  
+  .partner-logo {
+    width: 100%;
+    height: auto;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Add further styling as needed */
+  
